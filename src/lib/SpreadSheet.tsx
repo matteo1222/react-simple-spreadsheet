@@ -9,14 +9,27 @@ export interface CellIndex {
 
 function SpreadSheet() {
   const [selectedCell, setSelectedCell] = useState<null | CellIndex>(null)
+  const [isEditting, setIsEditting] = useState<boolean>(false)
   let numCol = 26
   let numRow = 50
 
-  function handleCellClick(rowIdx: number, colIdx: number) {
+  function handleCellClick(
+    event: React.MouseEvent,
+    rowIdx: number,
+    colIdx: number
+  ) {
+    if (selectedCell?.rowIdx !== rowIdx || selectedCell?.colIdx !== colIdx) {
+      setIsEditting(false)
+    }
     setSelectedCell({
       rowIdx: rowIdx,
       colIdx: colIdx
     })
+
+    // handle double click
+    if (event.detail === 2) {
+      setIsEditting(true)
+    }
   }
   return (
     <table className="SpreadSheet">
@@ -49,6 +62,7 @@ function SpreadSheet() {
                         selectedCell?.rowIdx === rowIdx &&
                         selectedCell?.colIdx === colIdx
                       }
+                      isEditting={isEditting}
                       onClick={handleCellClick}
                     />
                   )

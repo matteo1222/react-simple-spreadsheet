@@ -1,8 +1,17 @@
 .Cell {
   border: 1px solid gray;
   min-width: 4rem;
+  padding: 0;
 }
 
 .Cell--Selected {
   outline: 2px solid skyblue;
+}
+
+.Cell__Input {
+  width: 90%;
+  height: 100%;
+  outline: none;
+  border: none;
+  margin: 0;
 }

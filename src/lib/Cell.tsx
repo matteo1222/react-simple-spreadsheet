@@ -6,16 +6,21 @@ export interface CellProps {
   colIdx: number
   value: number | string
   selected: boolean
-  onClick: (rowIdx: number, colIdx: number) => void
+  isEditting: boolean
+  onClick: (event: React.MouseEvent, rowIdx: number, colIdx: number) => void
 }
 
 function Cell(props: CellProps) {
   return (
     <td
       className={`Cell ${props.selected ? "Cell--Selected" : ""}`}
-      onClick={() => props.onClick(props.rowIdx, props.colIdx)}
+      onClick={(event) => props.onClick(event, props.rowIdx, props.colIdx)}
     >
-      {props.value}
+      {props.selected && props.isEditting ? (
+        <input className="Cell__Input" autoFocus />
+      ) : (
+        props.value
+      )}
     </td>
   )
 }
