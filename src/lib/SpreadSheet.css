@@ -1,0 +1,15 @@
+.SpreadSheet {
+  border: 1px solid gray;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.SpreadSheet td, .SpreadSheet th {
+  border: 1px solid gray;
+  min-width: 4rem;
+  height: 1.5rem;
+}
+
+.SpreadSheet th {
+  background: lightgray;
+}
