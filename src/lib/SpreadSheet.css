@@ -5,16 +5,13 @@
   border-collapse: collapse;
 }
 
-.SpreadSheet td, .SpreadSheet th {
-  border: 1px solid gray;
-  min-width: 4rem;
-  height: var(--cell-height);
-}
-
 .SpreadSheet th {
   background: lightgray;
   position: sticky;
   top: 0;
+  min-width: 4rem;
+  height: var(--cell-height);
+
 }
 
 .SpreadSheet tbody th {

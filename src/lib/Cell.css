@@ -1,0 +1,8 @@
+.Cell {
+  border: 1px solid gray;
+  min-width: 4rem;
+}
+
+.Cell--Selected {
+  outline: 2px solid skyblue;
+}
