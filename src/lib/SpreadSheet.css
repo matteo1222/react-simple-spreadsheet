@@ -1,4 +1,5 @@
 .SpreadSheet {
+  --cell-height: 1.5rem;
   border: 1px solid gray;
   table-layout: fixed;
   border-collapse: collapse;
@@ -7,9 +8,15 @@
 .SpreadSheet td, .SpreadSheet th {
   border: 1px solid gray;
   min-width: 4rem;
-  height: 1.5rem;
+  height: var(--cell-height);
 }
 
 .SpreadSheet th {
   background: lightgray;
+  position: sticky;
+  top: 0;
+}
+
+.SpreadSheet tbody th {
+  top: var(--cell-height);
 }
