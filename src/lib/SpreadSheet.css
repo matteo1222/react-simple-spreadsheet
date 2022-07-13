@@ -16,4 +16,5 @@
 
 .SpreadSheet tbody th {
   top: var(--cell-height);
+  left: 0;
 }
