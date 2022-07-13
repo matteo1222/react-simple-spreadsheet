@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
 import { parseCellInputValue } from "../utils/parse"
@@ -18,6 +18,7 @@ export interface SpreadSheetProps {
 }
 
 function SpreadSheet(props: SpreadSheetProps) {
+  const tableRef = useRef<HTMLTableElement>(null)
   const setData = props.onChange
   const [selectedCell, setSelectedCell] = useState<null | CellIndex>(null)
   const [isEditting, setIsEditting] = useState<boolean>(false)
@@ -70,8 +71,71 @@ function SpreadSheet(props: SpreadSheetProps) {
     })
     setData(newData)
   }
+
+  function handleKeyDown(event: React.KeyboardEvent) {
+    // TODO: when selected cell is out of view, we should focus on the selected cell and scroll into view
+    // TODO: perhaps handleKEyDown should be attached on each cell? Cell can be focus and scroll into view
+    console.log("key", event.code)
+    if (!selectedCell) return
+    if (isEditting && event.code === "Enter") {
+      event.preventDefault()
+      setIsEditting(false)
+      setSelectedCell({
+        rowIdx: Math.min(selectedCell?.rowIdx + 1, numRow - 1),
+        colIdx: selectedCell?.colIdx
+      })
+
+      // Pressing enter cause table to be out of focus, so we need to set it focus
+      if (tableRef && tableRef.current) {
+        tableRef.current.focus()
+      }
+      return
+    }
+    if (
+      !isEditting &&
+      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.code)
+    ) {
+      event.preventDefault()
+      switch (event.code) {
+        case "ArrowUp":
+          setSelectedCell({
+            rowIdx: Math.max(selectedCell?.rowIdx - 1, 0),
+            colIdx: selectedCell?.colIdx
+          })
+          return
+        case "ArrowDown":
+          setSelectedCell({
+            rowIdx: Math.min(selectedCell?.rowIdx + 1, numRow - 1),
+            colIdx: selectedCell?.colIdx
+          })
+          return
+        case "ArrowLeft":
+          setSelectedCell({
+            rowIdx: selectedCell?.rowIdx,
+            colIdx: Math.max(selectedCell?.colIdx - 1, 0)
+          })
+          return
+        case "ArrowRight":
+          setSelectedCell({
+            rowIdx: selectedCell?.rowIdx,
+            colIdx: Math.min(selectedCell?.colIdx + 1, numCol - 1)
+          })
+          return
+      }
+    }
+
+    if (!isEditting) {
+      setIsEditting(true)
+      return
+    }
+  }
   return (
-    <table className="SpreadSheet">
+    <table
+      ref={tableRef}
+      className="SpreadSheet"
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
+    >
       <thead>
         <tr>
           {Array(numCol + 1)
