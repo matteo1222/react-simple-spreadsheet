@@ -1,7 +1,7 @@
 .Cell {
   border: 1px solid gray;
   min-width: 4rem;
-  padding: 0;
+  padding: 2px;
 }
 
 .Cell--Selected {

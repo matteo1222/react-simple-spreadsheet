@@ -92,14 +92,15 @@ function SpreadSheet(props: SpreadSheetProps) {
                 .map((_, colIdx) => {
                   if (colIdx === 0) return <th>{rowIdx + 1}</th>
                   // TODO: refactor cell col idx access
+                  const cellValue = props.data?.[rowIdx]?.[colIdx - 1]?.value
                   return (
                     <Cell
                       key={`${rowIdx}_${colIdx - 1}`}
                       rowIdx={rowIdx}
                       colIdx={colIdx - 1}
                       value={
-                        props.data?.[rowIdx]?.[colIdx - 1]?.value
-                          ? props.data?.[rowIdx]?.[colIdx - 1]?.value
+                        cellValue !== null && cellValue !== undefined
+                          ? cellValue
                           : ""
                       }
                       selected={
