@@ -31,7 +31,7 @@ function Cell(props: CellProps) {
           }
         />
       ) : (
-        props.value
+        <span className="Cell__Span">{props.value}</span>
       )}
     </td>
   )

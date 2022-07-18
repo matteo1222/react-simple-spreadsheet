@@ -73,6 +73,7 @@ function SpreadSheet(props: SpreadSheetProps) {
   }
 
   function handleKeyDown(event: React.KeyboardEvent) {
+    // TODO: number key does not trigger keydown event for some reason
     // TODO: when selected cell is out of view, we should focus on the selected cell and scroll into view
     // TODO: perhaps handleKEyDown should be attached on each cell? Cell can be focus and scroll into view
     console.log("key", event.code)
@@ -150,6 +151,7 @@ function SpreadSheet(props: SpreadSheetProps) {
         {Array(numRow)
           .fill(null)
           .map((_, rowIdx) => (
+            // Rows
             <tr key={rowIdx}>
               {Array(numCol + 1)
                 .fill(null)
