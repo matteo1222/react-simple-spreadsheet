@@ -63,9 +63,15 @@ function SpreadSheet(props: SpreadSheetProps) {
         // TODO: Add error handler
         for (let row = startRowIdx; row <= endRowIdx; row++) {
           const rowData = props.data[row]
+
+          if (!rowData) continue
           const colFragment = []
 
           for (let col = startColIdx; col <= endColIdx; col++) {
+            if (!rowData[col]) {
+              colFragment.push("")
+              continue
+            }
             colFragment.push(rowData[col].value)
           }
           fragment.push(colFragment)
@@ -184,8 +190,12 @@ function SpreadSheet(props: SpreadSheetProps) {
     }
   }
 
-  function calculateFormula(value: string) {
+  function calculateFormula(value: string): ICalculateFormulaRes {
     let parseResult = formulaParser.parse(value)
+
+    if (parseResult.result.toString().slice(0, 1) === "=") {
+      return calculateFormula(parseResult.result.toString().slice(1))
+    }
     console.log("paseResule", parseResult)
 
     return parseResult
