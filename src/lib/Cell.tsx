@@ -1,5 +1,6 @@
 import React from "react"
 import "./Cell.css"
+import { ICalculateFormulaRes } from "./SpreadSheet"
 
 export interface CellProps {
   rowIdx: number
@@ -13,9 +14,23 @@ export interface CellProps {
     rowIdx: number,
     colIdx: number
   ) => void
+  calculateFormula: (value: string) => ICalculateFormulaRes
 }
 
 function Cell(props: CellProps) {
+  function displayValue(value: number | string) {
+    if (typeof value === "string") {
+      if (value.slice(0, 1) === "=") {
+        const parseRes = props.calculateFormula(value.slice(1))
+
+        if (parseRes.error !== null) {
+          return parseRes.error
+        }
+        return parseRes.result
+      }
+    }
+    return value
+  }
   return (
     <td
       className={`Cell ${props.selected ? "Cell--Selected" : ""}`}
@@ -31,7 +46,7 @@ function Cell(props: CellProps) {
           }
         />
       ) : (
-        <span className="Cell__Span">{props.value}</span>
+        <span className="Cell__Span">{displayValue(props.value)}</span>
       )}
     </td>
   )

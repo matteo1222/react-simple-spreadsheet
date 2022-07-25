@@ -1,7 +1,8 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
 import { parseCellInputValue } from "../utils/parse"
+const HotFormulaParser = require("hot-formula-parser").Parser
 
 export interface CellIndex {
   rowIdx: number
@@ -17,6 +18,13 @@ export interface SpreadSheetProps {
   onChange: React.Dispatch<React.SetStateAction<ICellData[][]>>
 }
 
+export interface ICalculateFormulaRes {
+  error: null | string
+  result: string | number
+}
+
+const formulaParser = new HotFormulaParser()
+
 function SpreadSheet(props: SpreadSheetProps) {
   const tableRef = useRef<HTMLTableElement>(null)
   const setData = props.onChange
@@ -24,6 +32,26 @@ function SpreadSheet(props: SpreadSheetProps) {
   const [isEditting, setIsEditting] = useState<boolean>(false)
   let numCol = 26
   let numRow = 50
+
+  useEffect(() => {
+    // define FormulaParser's hook logic, refering label such as A1
+    formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
+      const rowIdx = cellCoord.row.index
+      const colIdx = cellCoord.column.index
+
+      // TODO: error handling
+      if (rowIdx > numRow || colIdx > numCol) {
+        throw new Error("Error - Out of Range")
+      }
+      if (rowIdx === selectedCell?.rowIdx && colIdx === selectedCell?.colIdx) {
+        throw new Error("Error - Self-referencing")
+      }
+      if (!props.data[rowIdx] || !props.data[rowIdx][colIdx]) {
+        return done("")
+      }
+      done(props.data[rowIdx][colIdx].value)
+    })
+  }, [formulaParser])
 
   function handleCellClick(
     event: React.MouseEvent,
@@ -130,6 +158,13 @@ function SpreadSheet(props: SpreadSheetProps) {
       return
     }
   }
+
+  function calculateFormula(value: string) {
+    let parseResult = formulaParser.parse(value)
+    console.log("paseResule", parseResult)
+
+    return parseResult
+  }
   return (
     <table
       ref={tableRef}
@@ -142,7 +177,7 @@ function SpreadSheet(props: SpreadSheetProps) {
           {Array(numCol + 1)
             .fill(null)
             .map((_, idx) => {
-              if (idx === 0) return <th></th>
+              if (idx === 0) return <th key={idx}></th>
               return <th key={idx}>{String.fromCharCode(64 + idx)}</th>
             })}
         </tr>
@@ -156,7 +191,8 @@ function SpreadSheet(props: SpreadSheetProps) {
               {Array(numCol + 1)
                 .fill(null)
                 .map((_, colIdx) => {
-                  if (colIdx === 0) return <th>{rowIdx + 1}</th>
+                  if (colIdx === 0)
+                    return <th key={rowIdx + 1}>{rowIdx + 1}</th>
                   // TODO: refactor cell col idx access
                   const cellValue = props.data?.[rowIdx]?.[colIdx - 1]?.value
                   return (
@@ -176,6 +212,7 @@ function SpreadSheet(props: SpreadSheetProps) {
                       isEditting={isEditting}
                       onClick={handleCellClick}
                       onChange={handleCellChange}
+                      calculateFormula={calculateFormula}
                     />
                   )
                 })}

@@ -8,6 +8,10 @@
   outline: 2px solid skyblue;
 }
 
+.Cell--HasError {
+  
+}
+
 .Cell__Input {
   width: 90%;
   height: 100%;
