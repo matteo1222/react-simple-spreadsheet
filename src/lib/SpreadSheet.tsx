@@ -51,6 +51,31 @@ function SpreadSheet(props: SpreadSheetProps) {
       }
       done(props.data[rowIdx][colIdx].value)
     })
+
+    formulaParser.on(
+      "callRangeValue",
+      (startCellCoord: any, endCellCoord: any, done: any) => {
+        const fragment = []
+        const startRowIdx = startCellCoord.row.index
+        const startColIdx = startCellCoord.column.index
+        const endRowIdx = endCellCoord.row.index
+        const endColIdx = endCellCoord.column.index
+        // TODO: Add error handler
+        for (let row = startRowIdx; row <= endRowIdx; row++) {
+          const rowData = props.data[row]
+          const colFragment = []
+
+          for (let col = startColIdx; col <= endColIdx; col++) {
+            colFragment.push(rowData[col].value)
+          }
+          fragment.push(colFragment)
+        }
+
+        if (fragment) {
+          done(fragment)
+        }
+      }
+    )
   }, [formulaParser])
 
   function handleCellClick(
