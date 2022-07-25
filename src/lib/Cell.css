@@ -2,6 +2,7 @@
   border: 1px solid gray;
   min-width: 4rem;
   padding: 2px;
+  overflow-y: hidden;
 }
 
 .Cell--Selected {

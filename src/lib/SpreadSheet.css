@@ -3,6 +3,8 @@
   border: 1px solid gray;
   table-layout: fixed;
   border-collapse: collapse;
+  width: 100%;
+  height: 100%;
 }
 
 .SpreadSheet th {
