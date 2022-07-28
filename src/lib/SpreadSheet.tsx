@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useMemo } from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
 import { parseCellInputValue } from "../utils/parse"
@@ -23,9 +23,11 @@ export interface ICalculateFormulaRes {
   result: string | number
 }
 
-const formulaParser = new HotFormulaParser()
-
 function SpreadSheet(props: SpreadSheetProps) {
+  const formulaParser = useMemo(() => {
+    return new HotFormulaParser()
+  }, [HotFormulaParser])
+
   const tableRef = useRef<HTMLTableElement>(null)
   const setData = props.onChange
   const [selectedCell, setSelectedCell] = useState<null | CellIndex>(null)
@@ -34,6 +36,7 @@ function SpreadSheet(props: SpreadSheetProps) {
   let numRow = 50
 
   useEffect(() => {
+    console.log("gogo parser", props.data)
     // define FormulaParser's hook logic, refering label such as A1
     formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
       const rowIdx = cellCoord.row.index
@@ -65,16 +68,23 @@ function SpreadSheet(props: SpreadSheetProps) {
           const rowData = props.data[row]
 
           if (!rowData) continue
-          const colFragment = []
+          const rowFragment = []
 
           for (let col = startColIdx; col <= endColIdx; col++) {
             if (!rowData[col]) {
-              colFragment.push("")
+              rowFragment.push("")
               continue
             }
-            colFragment.push(rowData[col].value)
+            // When cell value is a formula
+            if (rowData[col].value.toString().slice(0, 1) === "=") {
+              rowFragment.push(
+                calculateFormula(rowData[col].value.toString().slice(1)).result
+              )
+              continue
+            }
+            rowFragment.push(rowData[col].value)
           }
-          fragment.push(colFragment)
+          fragment.push(rowFragment)
         }
 
         if (fragment) {
@@ -82,7 +92,12 @@ function SpreadSheet(props: SpreadSheetProps) {
         }
       }
     )
-  }, [formulaParser])
+    // tear down event listener
+    return () => {
+      formulaParser.off("callCellValue")
+      formulaParser.off("callRangeValue")
+    }
+  }, [formulaParser, props.data])
 
   function handleCellClick(
     event: React.MouseEvent,
@@ -193,6 +208,9 @@ function SpreadSheet(props: SpreadSheetProps) {
   function calculateFormula(value: string): ICalculateFormulaRes {
     let parseResult = formulaParser.parse(value)
 
+    if (parseResult.error !== null) {
+      return parseResult
+    }
     if (parseResult.result.toString().slice(0, 1) === "=") {
       return calculateFormula(parseResult.result.toString().slice(1))
     }
