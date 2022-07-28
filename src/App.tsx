@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import SpreadSheet from "./lib/SpreadSheet"
 import { ICellData } from "./lib/SpreadSheet"
+import "./App.css"
 
 function App() {
   const [data, setData] = useState<ICellData[][]>([

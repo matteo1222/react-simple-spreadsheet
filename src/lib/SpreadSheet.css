@@ -8,7 +8,8 @@
 }
 
 .SpreadSheet th {
-  background: lightgray;
+  background: var(--color-table-head-bg);
+  color: var(--color-table-head-text);
   position: sticky;
   top: 0;
   min-width: 4rem;
