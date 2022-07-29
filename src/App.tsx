@@ -9,7 +9,7 @@ function App() {
     [{ value: 2 }, { value: 4 }]
   ])
   return (
-    <div>
+    <div className="Container">
       <SpreadSheet data={data} onChange={setData} />
     </div>
   )

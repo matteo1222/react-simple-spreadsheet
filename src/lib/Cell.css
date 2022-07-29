@@ -1,8 +1,10 @@
 .Cell {
-  border: 1px solid gray;
-  min-width: 4rem;
+  border: 1px solid var(--color-table-cell-border);
   padding: 2px;
   overflow-x: hidden;
+}
+
+.Cell__Span {
 }
 
 .Cell--Selected {

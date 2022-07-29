@@ -7,14 +7,16 @@
   height: 100%;
 }
 
+.SpreadSheet__Col {
+  min-width: 3rem;
+}
+
 .SpreadSheet th {
   background: var(--color-table-head-bg);
   color: var(--color-table-head-text);
   position: sticky;
   top: 0;
-  min-width: 4rem;
   height: var(--cell-height);
-
 }
 
 .SpreadSheet tbody th {

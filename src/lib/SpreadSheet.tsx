@@ -225,6 +225,13 @@ function SpreadSheet(props: SpreadSheetProps) {
       tabIndex={-1}
       onKeyDown={handleKeyDown}
     >
+      <colgroup>
+        {Array(numCol + 1)
+          .fill(null)
+          .map((_, idx) => {
+            return <col key={idx} className="SpreadSheet__Col"></col>
+          })}
+      </colgroup>
       <thead>
         <tr>
           {Array(numCol + 1)

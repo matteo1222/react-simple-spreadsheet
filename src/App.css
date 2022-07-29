@@ -1,4 +1,11 @@
 :root {
   --color-table-head-bg: #f8f9fa;
   --color-table-head-text: #6c6c6c;
+  --color-table-cell-border: #8b8b8b;
+}
+
+.Container {
+  width: 20rem;
+  height: 40rem;
+  overflow: scroll;
 }
