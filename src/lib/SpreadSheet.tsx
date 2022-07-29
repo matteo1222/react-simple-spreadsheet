@@ -75,11 +75,20 @@ function SpreadSheet(props: SpreadSheetProps) {
               rowFragment.push("")
               continue
             }
+            // self referencing
+            if (row === selectedCell?.rowIdx && col === selectedCell?.colIdx) {
+              throw new Error("Error - Self-referencing")
+            }
             // When cell value is a formula
             if (rowData[col].value.toString().slice(0, 1) === "=") {
-              rowFragment.push(
-                calculateFormula(rowData[col].value.toString().slice(1)).result
+              const parseResult = calculateFormula(
+                rowData[col].value.toString().slice(1)
               )
+
+              if (parseResult.error !== null) {
+                throw new Error(parseResult.error)
+              }
+              rowFragment.push(parseResult.result)
               continue
             }
             rowFragment.push(rowData[col].value)
