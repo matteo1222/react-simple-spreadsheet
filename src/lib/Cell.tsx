@@ -14,10 +14,13 @@ export interface CellProps {
     rowIdx: number,
     colIdx: number
   ) => void
+  onBlur: (event: React.FocusEvent) => void
   calculateFormula: (value: string) => ICalculateFormulaRes
 }
 
+// TODO: Solve formula dependency bug
 function Cell(props: CellProps) {
+  // console.log("key", props.rowIdx, props.colIdx)
   function displayValue(value: number | string) {
     if (typeof value === "string") {
       if (value.slice(0, 1) === "=") {
@@ -36,7 +39,7 @@ function Cell(props: CellProps) {
       className={`Cell ${props.selected ? "Cell--Selected" : ""}`}
       onClick={(event) => props.onClick(event, props.rowIdx, props.colIdx)}
     >
-      {props.selected && props.isEditting ? (
+      {props.isEditting ? (
         <input
           className="Cell__Input"
           autoFocus
@@ -44,6 +47,7 @@ function Cell(props: CellProps) {
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             props.onChange(event, props.rowIdx, props.colIdx)
           }
+          onBlur={props.onBlur}
         />
       ) : (
         <span className="Cell__Span">{displayValue(props.value)}</span>
@@ -52,4 +56,6 @@ function Cell(props: CellProps) {
   )
 }
 
-export default Cell
+Cell.whyDidYouRender = true
+
+export default React.memo(Cell)

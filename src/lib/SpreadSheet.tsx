@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react"
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
 import { parseCellInputValue } from "../utils/parse"
@@ -26,7 +26,7 @@ export interface ICalculateFormulaRes {
 function SpreadSheet(props: SpreadSheetProps) {
   const formulaParser = useMemo(() => {
     return new HotFormulaParser()
-  }, [HotFormulaParser])
+  }, [])
 
   const tableRef = useRef<HTMLTableElement>(null)
   const setData = props.onChange
@@ -36,7 +36,6 @@ function SpreadSheet(props: SpreadSheetProps) {
   let numRow = 50
 
   useEffect(() => {
-    console.log("gogo parser", props.data)
     // define FormulaParser's hook logic, refering label such as A1
     formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
       const rowIdx = cellCoord.row.index
@@ -108,18 +107,24 @@ function SpreadSheet(props: SpreadSheetProps) {
     }
   }, [formulaParser, props.data])
 
+  function handleCellBlur(event: React.FocusEvent) {
+    setIsEditting(false)
+  }
   function handleCellClick(
     event: React.MouseEvent,
     rowIdx: number,
     colIdx: number
   ) {
     console.log(rowIdx, colIdx)
-    if (selectedCell?.rowIdx !== rowIdx || selectedCell?.colIdx !== colIdx) {
-      setIsEditting(false)
-    }
-    setSelectedCell({
-      rowIdx: rowIdx,
-      colIdx: colIdx
+    // if (selectedCell?.rowIdx !== rowIdx || selectedCell?.colIdx !== colIdx) {
+    //   setIsEditting(false)
+    // }
+    // TODO: if rowIdx and colIdx are same as previous, consider not setting new object state?
+    setSelectedCell((prevSelected) => {
+      if (prevSelected?.rowIdx === rowIdx && prevSelected?.colIdx === colIdx) {
+        return prevSelected
+      }
+      return { rowIdx: rowIdx, colIdx: colIdx }
     })
 
     // handle double click
@@ -227,6 +232,15 @@ function SpreadSheet(props: SpreadSheetProps) {
 
     return parseResult
   }
+
+  // memoized callback
+  const handleClickCallback = useCallback(handleCellClick, [])
+  const handleChangeCallback = useCallback(handleCellChange, [
+    props.data,
+    setData
+  ])
+  const calculateFormulaCallback = useCallback(calculateFormula, [])
+  const handleBlurCallback = useCallback(handleCellBlur, [])
   return (
     <table
       ref={tableRef}
@@ -264,6 +278,9 @@ function SpreadSheet(props: SpreadSheetProps) {
                     return <th key={rowIdx + 1}>{rowIdx + 1}</th>
                   // TODO: refactor cell col idx access
                   const cellValue = props.data?.[rowIdx]?.[colIdx - 1]?.value
+                  const isSelected =
+                    selectedCell?.rowIdx === rowIdx &&
+                    selectedCell?.colIdx === colIdx - 1
                   return (
                     <Cell
                       key={`${rowIdx}_${colIdx - 1}`}
@@ -274,14 +291,12 @@ function SpreadSheet(props: SpreadSheetProps) {
                           ? cellValue
                           : ""
                       }
-                      selected={
-                        selectedCell?.rowIdx === rowIdx &&
-                        selectedCell?.colIdx === colIdx - 1
-                      }
-                      isEditting={isEditting}
-                      onClick={handleCellClick}
-                      onChange={handleCellChange}
-                      calculateFormula={calculateFormula}
+                      selected={isSelected}
+                      isEditting={isSelected && isEditting}
+                      onClick={handleClickCallback}
+                      onChange={handleChangeCallback}
+                      onBlur={handleBlurCallback}
+                      calculateFormula={calculateFormulaCallback}
                     />
                   )
                 })}
@@ -291,5 +306,7 @@ function SpreadSheet(props: SpreadSheetProps) {
     </table>
   )
 }
+
+SpreadSheet.whyDidYouRender = true
 
 export default SpreadSheet
