@@ -1,6 +1,6 @@
 import React from "react"
 import "./Cell.css"
-import { ICalculateFormulaRes } from "./SpreadSheet"
+import { ICalculateFormulaRes, CellIndex } from "./SpreadSheet"
 
 export interface CellProps {
   rowIdx: number
@@ -15,7 +15,7 @@ export interface CellProps {
     colIdx: number
   ) => void
   onBlur: (event: React.FocusEvent) => void
-  calculateFormula: (value: string) => ICalculateFormulaRes
+  calculateFormula: (cell: CellIndex, value: string) => ICalculateFormulaRes
 }
 
 // TODO: Solve formula dependency bug
@@ -24,7 +24,10 @@ function Cell(props: CellProps) {
   function displayValue(value: number | string) {
     if (typeof value === "string") {
       if (value.slice(0, 1) === "=") {
-        const parseRes = props.calculateFormula(value.slice(1))
+        const parseRes = props.calculateFormula(
+          { rowIdx: props.rowIdx, colIdx: props.colIdx },
+          value.slice(1)
+        )
 
         if (parseRes.error !== null) {
           return parseRes.error
@@ -57,5 +60,13 @@ function Cell(props: CellProps) {
 }
 
 Cell.whyDidYouRender = true
+
+// Update Cell when it contains formula because it might depend on another cell's value
+function containsNoFormula(prevProps: CellProps, nextProps: CellProps) {
+  return (
+    prevProps.value.toString().slice(0, 1) !== "=" &&
+    nextProps.value.toString().slice(0, 1) !== "="
+  )
+}
 
 export default React.memo(Cell)

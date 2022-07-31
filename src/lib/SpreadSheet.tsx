@@ -37,6 +37,8 @@ function SpreadSheet(props: SpreadSheetProps) {
 
   useEffect(() => {
     // define FormulaParser's hook logic, refering label such as A1
+    const currentCell = formulaParser.currentCell
+
     formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
       const rowIdx = cellCoord.row.index
       const colIdx = cellCoord.column.index
@@ -45,7 +47,7 @@ function SpreadSheet(props: SpreadSheetProps) {
       if (rowIdx > numRow || colIdx > numCol) {
         throw new Error("Error - Out of Range")
       }
-      if (rowIdx === selectedCell?.rowIdx && colIdx === selectedCell?.colIdx) {
+      if (rowIdx === currentCell?.rowIdx && colIdx === currentCell?.colIdx) {
         throw new Error("Error - Self-referencing")
       }
       if (!props.data[rowIdx] || !props.data[rowIdx][colIdx]) {
@@ -75,12 +77,13 @@ function SpreadSheet(props: SpreadSheetProps) {
               continue
             }
             // self referencing
-            if (row === selectedCell?.rowIdx && col === selectedCell?.colIdx) {
+            if (row === currentCell?.rowIdx && col === currentCell?.colIdx) {
               throw new Error("Error - Self-referencing")
             }
             // When cell value is a formula
             if (rowData[col].value.toString().slice(0, 1) === "=") {
               const parseResult = calculateFormula(
+                { rowIdx: row, colIdx: col },
                 rowData[col].value.toString().slice(1)
               )
 
@@ -222,14 +225,18 @@ function SpreadSheet(props: SpreadSheetProps) {
     }
   }
 
-  function calculateFormula(value: string): ICalculateFormulaRes {
+  function calculateFormula(
+    cell: CellIndex,
+    value: string
+  ): ICalculateFormulaRes {
+    formulaParser.currentCell = cell
     let parseResult = formulaParser.parse(value)
 
     if (parseResult.error !== null) {
       return parseResult
     }
     if (parseResult.result.toString().slice(0, 1) === "=") {
-      return calculateFormula(parseResult.result.toString().slice(1))
+      return calculateFormula(cell, parseResult.result.toString().slice(1))
     }
     console.log("paseResule", parseResult)
 
