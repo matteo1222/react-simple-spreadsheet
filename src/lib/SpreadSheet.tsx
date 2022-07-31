@@ -140,24 +140,27 @@ function SpreadSheet(props: SpreadSheetProps) {
   ) {
     // TODO: refactor, not every cell will need to rerender when a cell is being editted
     // if the editted cell is out of range of the provided data, expand the data and fill in the correct values
-    const rowLength = Math.max(rowIdx + 1, props.data.length)
-    const colLength = Math.max(colIdx + 1, props.data[0].length)
-    const newData = new Array(rowLength).fill(null).map((_, newRowIdx) => {
-      return new Array(colLength).fill(null).map((_, newColIdx) => {
-        if (rowIdx === newRowIdx && colIdx === newColIdx) {
-          return {
-            value: parseCellInputValue(event.target.value)
+
+    setData((prevData) => {
+      const rowLength = Math.max(rowIdx + 1, prevData.length)
+      const colLength = Math.max(colIdx + 1, prevData[0].length)
+      const newData = new Array(rowLength).fill(null).map((_, newRowIdx) => {
+        return new Array(colLength).fill(null).map((_, newColIdx) => {
+          if (rowIdx === newRowIdx && colIdx === newColIdx) {
+            return {
+              value: parseCellInputValue(event.target.value)
+            }
           }
-        }
-        if (props.data[newRowIdx]?.[newColIdx]) {
-          return props.data[newRowIdx][newColIdx]
-        }
-        return {
-          value: ""
-        }
+          if (prevData[newRowIdx]?.[newColIdx]) {
+            return prevData[newRowIdx][newColIdx]
+          }
+          return {
+            value: ""
+          }
+        })
       })
+      return newData
     })
-    setData(newData)
   }
 
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -235,10 +238,7 @@ function SpreadSheet(props: SpreadSheetProps) {
 
   // memoized callback
   const handleClickCallback = useCallback(handleCellClick, [])
-  const handleChangeCallback = useCallback(handleCellChange, [
-    props.data,
-    setData
-  ])
+  const handleChangeCallback = useCallback(handleCellChange, [setData])
   const calculateFormulaCallback = useCallback(calculateFormula, [])
   const handleBlurCallback = useCallback(handleCellBlur, [])
   return (
