@@ -1,6 +1,14 @@
 # React Sheet
 
-# Usage
+## Installation
+
+Run the following command:
+
+```bash
+npm install react-sheet
+```
+
+## Usage
 
 ```js
 import React, { useState } from "react"
