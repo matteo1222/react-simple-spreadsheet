@@ -8,7 +8,7 @@ import React, {
 } from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
-import { parseCellInputValue } from "../utils/parse"
+import { parseCellInputValue } from "./utils/parse"
 const HotFormulaParser = require("hot-formula-parser").Parser
 
 export interface CellIndex {
