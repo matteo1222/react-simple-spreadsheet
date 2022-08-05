@@ -5,19 +5,18 @@
 Run the following command:
 
 ```bash
-npm install react-sheet
+npm install react-simple-spreadsheet
 ```
 
 ## Usage
 
 ```js
 import React, { useState } from "react"
-import SpreadSheet from "./lib/SpreadSheet"
-import { ICellData } from "./lib/SpreadSheet"
+import SpreadSheet from "react-simple-spreadsheet"
 import "./App.css"
 
 function App() {
-  const [data, setData] = useState<ICellData[][]>([
+  const [data, setData] = useState([
     [{ value: 1 }, { value: 2 }],
     [{ value: 2 }, { value: 4 }]
   ])
