@@ -1,4 +1,11 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react"
+import React, {
+  useState,
+  useReducer,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback
+} from "react"
 import "./SpreadSheet.css"
 import Cell from "./Cell"
 import { parseCellInputValue } from "../utils/parse"
@@ -24,6 +31,9 @@ export interface ICalculateFormulaRes {
 }
 
 function SpreadSheet(props: SpreadSheetProps) {
+  const [, updateState] = React.useState({})
+  const forceUpdate = React.useCallback(() => updateState({}), [])
+
   const formulaParser = useMemo(() => {
     return new HotFormulaParser()
   }, [])
@@ -36,7 +46,14 @@ function SpreadSheet(props: SpreadSheetProps) {
   let numRow = 50
 
   useEffect(() => {
-    // define FormulaParser's hook logic, refering label such as A1
+    // TODO: are there better ways?
+    // We need to synchronize when the user is editting a cell being refered by another cell,
+    // they should update at the same time.
+    // the reason formula cell's data state "lags behind one state" of original cell without forceUpdate is because,
+    // when data state change, formulaParser hasn't register the new callCellValue listener yet.
+    // therefore we add a forceUpdate whenever the data state changes
+    forceUpdate()
+
     const currentCell = formulaParser.currentCell
 
     formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
@@ -141,9 +158,7 @@ function SpreadSheet(props: SpreadSheetProps) {
     rowIdx: number,
     colIdx: number
   ) {
-    // TODO: refactor, not every cell will need to rerender when a cell is being editted
     // if the editted cell is out of range of the provided data, expand the data and fill in the correct values
-
     setData((prevData) => {
       const rowLength = Math.max(rowIdx + 1, prevData.length)
       const colLength = Math.max(colIdx + 1, prevData[0].length)

@@ -61,12 +61,25 @@ function Cell(props: CellProps) {
 
 Cell.whyDidYouRender = true
 
-// Update Cell when it contains formula because it might depend on another cell's value
-function containsNoFormula(prevProps: CellProps, nextProps: CellProps) {
+function areEqual(prevProps: CellProps, nextProps: CellProps) {
+  // Update Cell when it contains formula because it might depend on another cell's value
+  if (
+    prevProps.value.toString().slice(0, 1) === "=" ||
+    nextProps.value.toString().slice(0, 1) === "="
+  ) {
+    return false
+  }
   return (
-    prevProps.value.toString().slice(0, 1) !== "=" &&
-    nextProps.value.toString().slice(0, 1) !== "="
+    prevProps.rowIdx === nextProps.rowIdx &&
+    prevProps.colIdx === nextProps.colIdx &&
+    prevProps.value === nextProps.value &&
+    prevProps.selected === nextProps.selected &&
+    prevProps.isEditting === nextProps.isEditting &&
+    prevProps.onClick === nextProps.onClick &&
+    prevProps.onChange === nextProps.onChange &&
+    prevProps.onBlur === nextProps.onBlur &&
+    prevProps.calculateFormula === nextProps.calculateFormula
   )
 }
 
-export default React.memo(Cell)
+export default React.memo(Cell, areEqual)
