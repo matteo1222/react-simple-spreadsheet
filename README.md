@@ -1,4 +1,4 @@
-# React Sheet
+# React Simple SpreadSheet
 
 ## Installation
 
