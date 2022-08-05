@@ -54,9 +54,9 @@ function SpreadSheet(props: SpreadSheetProps) {
     // therefore we add a forceUpdate whenever the data state changes
     forceUpdate()
 
-    const currentCell = formulaParser.currentCell
-
     formulaParser.on("callCellValue", (cellCoord: any, done: any) => {
+      const currentCell = formulaParser.currentCell
+
       const rowIdx = cellCoord.row.index
       const colIdx = cellCoord.column.index
 
@@ -76,6 +76,8 @@ function SpreadSheet(props: SpreadSheetProps) {
     formulaParser.on(
       "callRangeValue",
       (startCellCoord: any, endCellCoord: any, done: any) => {
+        const currentCell = formulaParser.currentCell
+
         const fragment = []
         const startRowIdx = startCellCoord.row.index
         const startColIdx = startCellCoord.column.index
