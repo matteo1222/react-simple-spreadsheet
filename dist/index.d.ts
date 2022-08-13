@@ -1,3 +1,2 @@
 import SpreadSheet from "./SpreadSheet";
-
-export { SpreadSheet }
+export { SpreadSheet };
