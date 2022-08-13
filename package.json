@@ -1,6 +1,6 @@
 {
   "name": "react-simple-spreadsheet",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [ "dist", "README.md" ],
@@ -22,7 +22,8 @@
   "scripts": {
     "start": "react-scripts start",
     "clean": "rm -rf dist",
-    "build": "npm run clean && mkdir dist && tsc && cp package.json README.md ./dist",
+    "copyFiles": "cp src/lib/*.css ./dist",
+    "build": "npm run clean && mkdir dist && npm run copyFiles && tsc && cp package.json README.md ./dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
