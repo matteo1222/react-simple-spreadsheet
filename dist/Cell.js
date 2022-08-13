@@ -14,7 +14,6 @@ import React from "react";
 import "./Cell.css";
 // TODO: Solve formula dependency bug
 function Cell(props) {
-    // console.log("key", props.rowIdx, props.colIdx)
     function displayValue(value) {
         if (typeof value === "string") {
             if (value.slice(0, 1) === "=") {

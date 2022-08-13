@@ -20,7 +20,6 @@ export interface CellProps {
 
 // TODO: Solve formula dependency bug
 function Cell(props: CellProps) {
-  // console.log("key", props.rowIdx, props.colIdx)
   function displayValue(value: number | string) {
     if (typeof value === "string") {
       if (value.slice(0, 1) === "=") {

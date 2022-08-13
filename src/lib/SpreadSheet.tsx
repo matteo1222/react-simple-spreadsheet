@@ -137,7 +137,6 @@ function SpreadSheet(props: SpreadSheetProps) {
     rowIdx: number,
     colIdx: number
   ) {
-    console.log(rowIdx, colIdx)
     // if (selectedCell?.rowIdx !== rowIdx || selectedCell?.colIdx !== colIdx) {
     //   setIsEditting(false)
     // }
@@ -187,7 +186,6 @@ function SpreadSheet(props: SpreadSheetProps) {
     // TODO: number key does not trigger keydown event for some reason
     // TODO: when selected cell is out of view, we should focus on the selected cell and scroll into view
     // TODO: perhaps handleKEyDown should be attached on each cell? Cell can be focus and scroll into view
-    console.log("key", event.code)
     if (!selectedCell) return
     if (isEditting && event.code === "Enter") {
       event.preventDefault()
@@ -255,7 +253,6 @@ function SpreadSheet(props: SpreadSheetProps) {
     if (parseResult.result.toString().slice(0, 1) === "=") {
       return calculateFormula(cell, parseResult.result.toString().slice(1))
     }
-    console.log("paseResule", parseResult)
 
     return parseResult
   }
