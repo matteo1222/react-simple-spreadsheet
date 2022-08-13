@@ -1,6 +1,6 @@
 {
   "name": "react-simple-spreadsheet",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "files": [ "dist", "README.md" ],

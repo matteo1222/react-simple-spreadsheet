@@ -1,5 +1,8 @@
 .SpreadSheet {
   --cell-height: 1.5rem;
+  --color-table-head-bg: #f8f9fa;
+  --color-table-head-text: #6c6c6c;
+  --color-table-cell-border: #8b8b8b;
   border: 1px solid gray;
   table-layout: fixed;
   border-collapse: collapse;
